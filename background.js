@@ -18,7 +18,7 @@ chrome.alarms.onAlarm.addListener(handleAlarm);
 function openDemoTab() {
   chrome.alarms.create('fetch-reviews', {
     delayInMinutes: 1,
-    periodInMinutes: 3
+    periodInMinutes: 720
   });
   chrome.tabs.create({ url: 'index.html' });
 }
@@ -43,6 +43,7 @@ async function handleAlarm(alarm) {
 
     // navigation of all pages is finished
     console.log('Navigation Completed');
+    chrome.tabs.update({ url: 'index.html' });
   });
 
 };
