@@ -54,7 +54,7 @@ class AlarmManager {
     this.displayElement = display;
     this.logElement = log;
 
-    this.logMessage('Manager: initializing demo');
+    this.logMessage('Manager: initializing');
 
     this.displayElement.addEventListener('click', this.handleCancelAlarm);
     chrome.alarms.onAlarm.addListener(this.handleAlarm);

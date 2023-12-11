@@ -1,32 +1,22 @@
 'use strict';
 
-// activate extension when host is www.website.com
-// chrome.runtime.onMessage.addListener((msg, sender, res) => {
-//   console.log(msg);
-// });
+// let urls_list = [
+//   'https://ads.google.com/u/2/localservices/reviews?cid=5400496248&bid=2604405837&pid=9999999999&euid=8565125162&hl=en&gl=US',
+//   'https://ads.google.com/u/2/localservices/reviews?cid=2725973755&bid=2657705400&pid=9999999999&euid=8565125162&hl=en&gl=US',
+// ];
+async function get_urls() {
+  var res = await fetch('https://faas-nyc1-2ef2e6cc.doserverless.co/api/v1/web/fn-a2353696-a080-4405-9f3e-bd09ab52db29/wefix/get-reviews-urls', {
+    method: 'GET'
+  })
+  return await res.json()
 
-// chrome.runtime.onStartup.addListener(function() {
-//   console.log('open');
-
-//   openDemoTab();
-
-//   // Create an alarm so we have something to look at in the demo
-//   chrome.alarms.create('demo-default-alarm', {
-//     delayInMinutes: 1,
-//     periodInMinutes: 1
-//   });
-// })
-
-let urls_list = [
-  'https://ads.google.com/u/2/localservices/reviews?cid=5400496248&bid=2604405837&pid=9999999999&euid=8565125162&hl=en&gl=US',
-  'https://ads.google.com/u/2/localservices/reviews?cid=2725973755&bid=2657705400&pid=9999999999&euid=8565125162&hl=en&gl=US',
-];
+}
 
 chrome.action.onClicked.addListener(openDemoTab);
 chrome.alarms.onAlarm.addListener(handleAlarm);
 
 function openDemoTab() {
-  chrome.alarms.create('demo-default-alarm', {
+  chrome.alarms.create('fetch-reviews', {
     delayInMinutes: 1,
     periodInMinutes: 3
   });
@@ -36,13 +26,16 @@ function openDemoTab() {
 async function handleAlarm(alarm) {
   const json = JSON.stringify(alarm);
 
+  const urls = await get_urls()
+
+  console.log(urls)
   console.log(json)
 
   // query the current tab to find its id
   chrome.tabs.query({ active: true, currentWindow: true }, async function (tabs) {
-    for (let i = 0; i < urls_list.length; i++) {
+    for (let i = 0; i < urls.rows.length; i++) {
       // navigate to next url
-      await goToPage(urls_list[i], i + 1, tabs[0].id);
+      await goToPage(urls.rows[i].url, i + 1, tabs[0].id, urls.rows[i].id);
 
       // // wait for 5 seconds
       // await waitSeconds(2);
@@ -54,7 +47,7 @@ async function handleAlarm(alarm) {
 
 };
 
-async function goToPage(url, url_index, tab_id) {
+async function goToPage(url, url_index, tab_id, profile_id) {
   return new Promise(function (resolve, reject) {
     // update current tab with new url
     chrome.tabs.update({ url: url });
@@ -67,35 +60,35 @@ async function goToPage(url, url_index, tab_id) {
         chrome.tabs.onUpdated.removeListener(openPage);
 
         // fired when content script sends a message
-        chrome.runtime.onMessage.addListener(function getDOMInfo(message) {
+        chrome.runtime.onMessage.addListener(async function getDOMInfo(message) {
           console.log("Downloading data")
           // remove onMessage event as it may get duplicated
           chrome.runtime.onMessage.removeListener(getDOMInfo);
 
           // save data from message to a JSON file and download
           let json_data = {
+            profile_id: profile_id,
             url: url,
             reviews: JSON.parse(message).reviews
           };
 
-          let blob = new Blob([JSON.stringify(json_data)], { type: "application/json;charset=utf-8" });
-          // let objectURL = URL.createObjectURL(blob);
-          // chrome.downloads.download({ url: objectURL, filename: (url_index + 'data.json'), conflictAction: 'overwrite' });
-          const reader = new FileReader();
-          reader.onload = () => {
-            const buffer = reader.result;
-            const blobUrl = `data:${blob.type};base64,${btoa(new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), ''))}`;
-            chrome.downloads.download({ url: blobUrl, filename: (url_index + 'data.json'), conflictAction: 'overwrite' });
-            // chrome.downloads.download({
-            //   url: blobUrl,
-            //   filename: (url_index + 'data.json'),
-            //   saveAs: true,
-            //   conflictAction: "uniquify"
-            // }, () => {
-            //   sendResponse({ success: true });
-            // });
-          };
-          reader.readAsArrayBuffer(blob);
+          await fetch('https://faas-nyc1-2ef2e6cc.doserverless.co/api/v1/web/fn-a2353696-a080-4405-9f3e-bd09ab52db29/wefix/save-reviews', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(json_data)
+          })
+
+          // let blob = new Blob([JSON.stringify(json_data)], { type: "application/json;charset=utf-8" });
+
+          // const reader = new FileReader();
+          // reader.onload = () => {
+          //   const buffer = reader.result;
+          //   const blobUrl = `data:${blob.type};base64,${btoa(new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), ''))}`;
+          //   chrome.downloads.download({ url: blobUrl, filename: (url_index + 'data.json'), conflictAction: 'overwrite' });
+          // };
+          // reader.readAsArrayBuffer(blob);
         });
 
         chrome.scripting.executeScript({
