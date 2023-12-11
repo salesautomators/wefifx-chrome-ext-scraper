@@ -65,14 +65,14 @@ async function goToPage(url, url_index, tab_id, profile_id) {
           // remove onMessage event as it may get duplicated
           chrome.runtime.onMessage.removeListener(getDOMInfo);
 
-          let messages = JSON.parse(message).reviews
+          let comments = JSON.parse(message).reviews
 
-          if (messages.length > 0) {
+          if (comments.length > 0) {
             // save data from message to a JSON file and download
             let json_data = {
               profile_id: profile_id,
               url: url,
-              reviews: JSON.parse(messages)
+              reviews: comments
             };
 
             await fetch('https://faas-nyc1-2ef2e6cc.doserverless.co/api/v1/web/fn-a2353696-a080-4405-9f3e-bd09ab52db29/wefix/save-reviews', {
