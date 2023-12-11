@@ -1,3 +1,4 @@
+console.log("Executing script")
 let page_title = document.title,
     page_h1_tag = '';
 
