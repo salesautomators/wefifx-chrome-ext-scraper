@@ -62,25 +62,26 @@ async function goToPage(url, url_index, tab_id, profile_id) {
 
         // fired when content script sends a message
         chrome.runtime.onMessage.addListener(async function getDOMInfo(message) {
-          console.log("Downloading data")
           // remove onMessage event as it may get duplicated
           chrome.runtime.onMessage.removeListener(getDOMInfo);
 
-          // save data from message to a JSON file and download
-          let json_data = {
-            profile_id: profile_id,
-            url: url,
-            reviews: JSON.parse(message).reviews
-          };
+          if (message.reviews.length > 0) {
+            // save data from message to a JSON file and download
+            let json_data = {
+              profile_id: profile_id,
+              url: url,
+              reviews: JSON.parse(message).reviews
+            };
 
-          await fetch('https://faas-nyc1-2ef2e6cc.doserverless.co/api/v1/web/fn-a2353696-a080-4405-9f3e-bd09ab52db29/wefix/save-reviews', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(json_data)
-          })
+            await fetch('https://faas-nyc1-2ef2e6cc.doserverless.co/api/v1/web/fn-a2353696-a080-4405-9f3e-bd09ab52db29/wefix/save-reviews', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(json_data)
+            })
 
+          }
           // let blob = new Blob([JSON.stringify(json_data)], { type: "application/json;charset=utf-8" });
 
           // const reader = new FileReader();
