@@ -1,0 +1,15 @@
+{
+	"name": "Review Scrape",
+	"version": "1.0",
+	"description": "Manually scrape reviews from google local",
+	"permissions": ["declarativeContent", "scripting", "activeTab", "tabs", "downloads", "alarms", "storage"],
+    "host_permissions": ["https://*/*"],
+	"action": {
+		"default_popup": "popup.html"
+	  },
+	"background": {
+    	"service_worker": "background.js",
+		"type": "module"
+	  },
+	"manifest_version": 3
+}

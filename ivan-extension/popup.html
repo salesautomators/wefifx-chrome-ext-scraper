@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            min-width: 300px;
+        }
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            margin: 10px
+        }
+
+        #url_select {
+            flex: none;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div class="wrapper">
+        <select name="Url" id="url_select">
+        </select>
+        <button type="button" disabled id="go_to">Go to page</button>
+        <button type="button" disabled id="parse">Parse current page</button>
+    </div>
+    <script src="popup.js"></script>
+
+</body>
+
+</html>
