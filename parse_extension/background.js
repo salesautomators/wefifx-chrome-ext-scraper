@@ -7,28 +7,25 @@ async function get_urls() {
   return await res.json()
 }
 
+chrome.action.onClicked.addListener(openDemoTab);
 
-chrome.action.onClicked.addListener(handleAlarm);
-// chrome.alarms.onAlarm.addListener(handleAlarm);
-
-// function openDemoTab() {
-//   chrome.alarms.create('fetch-reviews', {
-//     delayInMinutes: 1,
-//     periodInMinutes: 2
-//   });
-//   chrome.tabs.create({ url: 'index.html' });
-// }
+function openDemoTab() {
+  chrome.alarms.create('fetch-reviews', {
+    delayInMinutes: 1,
+    periodInMinutes: 30
+  });
+  chrome.tabs.create({ url: 'index.html' });
+}
 
 async function handleAlarm(alarm) {
 
-  console.log("Lauched bg service")
   const urls = await get_urls()
 
   console.log(urls)
 
   // query the current tab to find its id
   chrome.tabs.query({ active: true, currentWindow: true }, async function (tabs) {
-    console.log("navigating")
+
     for (let i = 0; i < urls.rows.length; i++) {
       // navigate to next url
       if (urls.rows[i].url) {
@@ -135,9 +132,6 @@ async function goToPageReports(url, url_index, tab_id, profile_id) {
               absolute_top_impression_rate: message_j.absolute_top_impression_rate
             };
 
-            console.log("POSTING_LEADS")
-            console.log(JSON.stringify(json_data))
-
             fetch('https://faas-nyc1-2ef2e6cc.doserverless.co/api/v1/web/fn-a2353696-a080-4405-9f3e-bd09ab52db29/wefix/save-leads', {
               method: 'POST',
               headers: {
@@ -188,9 +182,6 @@ async function goToPageProfile(url, url_index, tab_id, profile_id) {
               weekly_target: message_j.weekly_target,
               previous_7_days: message_j.previous_7_days
             };
-
-            console.log(JSON.stringify(json_data))
-            console.log("POSTING_PROFILE")
 
             fetch('https://faas-nyc1-2ef2e6cc.doserverless.co/api/v1/web/fn-a2353696-a080-4405-9f3e-bd09ab52db29/wefix/save-leads', {
               method: 'POST',
