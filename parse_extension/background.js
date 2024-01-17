@@ -4,7 +4,8 @@ async function get_urls() {
   var res = await fetch('https://faas-nyc1-2ef2e6cc.doserverless.co/api/v1/web/fn-a2353696-a080-4405-9f3e-bd09ab52db29/wefix/get-reviews-urls', {
     method: 'GET'
   })
-  return await res.json()
+  let res_j = await res.json()
+  return res_j
 }
 
 chrome.action.onClicked.addListener(openDemoTab);
