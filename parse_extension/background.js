@@ -9,11 +9,12 @@ async function get_urls() {
 }
 
 chrome.action.onClicked.addListener(openDemoTab);
+chrome.alarms.onAlarm.addListener(handleAlarm);
 
 function openDemoTab() {
   chrome.alarms.create('fetch-reviews', {
     delayInMinutes: 1,
-    periodInMinutes: 30
+    periodInMinutes: 60
   });
   chrome.tabs.create({ url: 'index.html' });
 }
@@ -101,10 +102,9 @@ async function goToPage(url, url_index, tab_id, profile_id) {
 }
 
 async function goToPageReports(url, url_index, tab_id, profile_id) {
-  console.log(url)
+
   return new Promise(function (resolve, reject) {
     // update current tab with new url
-    console.log(url)
     chrome.tabs.update({ url: url });
 
     // fired when tab is updated
