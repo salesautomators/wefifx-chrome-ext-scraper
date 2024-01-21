@@ -42,8 +42,11 @@ parse_btn.addEventListener('click', function () {
         // the return variable should only have one entry
         var activeTab = tabs[0];
         var activeTabId = activeTab.id; // or do whatever you need
+        //https://ads.google.com/u/2/localservices/reviews?cid=7242191078&bid=2680125475&pid=9999999999&euid=8565125162&hl=en&gl=US
+        let split_url = activeTab.url.split("/").slice(5).join('/').split('&').slice(0, 4).join("&")
+        let selcted_split_url = select.options[select.selectedIndex].dataset.urlp.split("/").slice(5).join('/').split('&').slice(0, 4).join("&")
 
-        if (activeTab.url.startsWith(select.options[select.selectedIndex].dataset.urlp)) {
+        if (split_url.startsWith(selcted_split_url)) {
             chrome.scripting.executeScript({
                 target: { tabId: activeTabId },
                 func: async (profile, url) => {
@@ -106,12 +109,12 @@ parse_btn.addEventListener('click', function () {
             });
         }
         else {
-            console.log(activeTab.url)
-            console.log(select.options[select.selectedIndex].dataset.urlp)
+            console.log(split_url)
+            console.log(selcted_split_url)
             chrome.scripting.executeScript({
                 target: { tabId: activeTabId },
                 func: () => {
-                    alert("Page is different from the selected one!")
+                    alert(`Page is different from the selected one! ${split_url}    versus  ${selcted_split_url}`)
                 },
             });
         }
