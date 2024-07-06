@@ -135,8 +135,8 @@ class AlarmManager {
   }
 
   async populateDisplay() {
-    return chrome.alarms.getAll((alarms) => {
-      for (const [index, alarm] of alarms.entries()) {
+    return chrome.alarms.getAll((alarms = []) => {
+      for (const [index, alarm] of [...alarms].entries()) {
         const isLast = index === alarms.length - 1;
         this.renderAlarm(alarm, isLast);
       }

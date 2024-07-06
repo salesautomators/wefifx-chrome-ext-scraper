@@ -1,0 +1,62 @@
+parameters: {}
+environment:
+  DB_HOST: '${DB_HOST}'
+  DB_PORT: '${DB_PORT}'
+  DB_DATABASE: '${DB_DATABASE}'
+  DB_USER: '${DB_USER}'
+  DB_PASSWORD: '${DB_PASSWORD}'
+packages:
+  - name: wefix
+    shared: false
+    environment: {}
+    parameters: {}
+    annotations: {}
+    functions:
+      - name: get-redirect-urls
+        binary: false
+        main: ''
+        runtime: nodejs:default
+        web: true
+        webSecure: false
+        parameters: {}
+        environment: {}
+        annotations: {}
+        limits:
+          timeout: 3000
+          memory: 256
+      - name: get-reviews-urls
+        binary: false
+        main: ''
+        runtime: nodejs:default
+        web: true
+        webSecure: false
+        parameters: {}
+        environment: {}
+        annotations: {}
+        limits:
+          timeout: 3000
+          memory: 256
+      - name: save-leads
+        binary: false
+        main: ''
+        runtime: nodejs:default
+        web: true
+        webSecure: false
+        parameters: {}
+        environment: {}
+        annotations: {}
+        limits:
+          timeout: 3000
+          memory: 256
+      - name: save-reviews
+        binary: false
+        main: ''
+        runtime: nodejs:default
+        web: true
+        webSecure: false
+        parameters: {}
+        environment: {}
+        annotations: {}
+        limits:
+          timeout: 3000
+          memory: 256
