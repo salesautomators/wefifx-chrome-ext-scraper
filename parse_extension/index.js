@@ -127,7 +127,7 @@ class AlarmManager {
   async cancelAllAlarms() {
     return chrome.alarms.clearAll((wasCleared) => {
       if (wasCleared) {
-        this.logMessage(`Manager: canceled all alarms"`);
+        this.logMessage(`Manager: canceled all alarms`);
       } else {
         this.logMessage(`Manager: could not canceled all alarms`);
       }
